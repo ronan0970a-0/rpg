@@ -12,9 +12,9 @@ export default function MagicCard({ m, onEdit }: { m: Magic; onEdit: () => void 
         <Actions onEdit={onEdit} onDelete={() => remove('magics', m.id)} />
       </div>
       <p className="text-xs text-purple-300">{m.type} • {m.element}</p>
-      <p className="mt-2 text-sm text-zinc-300">{m.description}</p>
+      <p className="mt-2 text-sm text-zinc-300 whitespace-pre-line">{m.description}</p>
       <div className="mt-2 space-y-1 text-xs text-zinc-400">
-        {details.map(([k, v]) => v && <p key={k}><b className="text-zinc-300">{k}:</b> {v}</p>)}
+        {details.map(([k, v]) => v && <p key={k} className="whitespace-pre-line"><b className="text-zinc-300">{k}:</b> {v}</p>)}
       </div>
     </Card>
   )
