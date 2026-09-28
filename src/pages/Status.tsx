@@ -22,6 +22,7 @@ export default function Status() {
         <h2 className="mb-3 text-3xl font-bold text-amber-400">Recursos</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {Object.entries(c.resources).map(([k, v]) => <StatusCard key={k} name={k} value={v} onChange={n => setResource(k, n)} />)}
+          <StatusCard name="Vida" value={c.hp} onChange={n => setCharacter({ hp: n })} />
           <StatusCard name="Sanidade" value={c.san} onChange={n => setCharacter({ san: n })} />
         </div>
       </section>
