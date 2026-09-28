@@ -1,7 +1,9 @@
+import { Brain, Heart } from 'lucide-react'
 import { useCharacter } from '../context/CharacterContext'
 import { Character } from '../types/character'
 import { ELEMENTS, META } from '../types/magic'
 import CharacterCard from '../components/CharacterCard'
+import ResourceCalculator from '../components/ResourceCalculator'
 import StatusCard from '../components/StatusCard'
 import { Card, Field, Num, Txt, uploadImage } from '../components/ui'
 
@@ -14,6 +16,14 @@ export default function Ficha() {
   return (
     <div className="space-y-4">
       <CharacterCard />
+      <Card className="grid gap-4 sm:grid-cols-2">
+        <ResourceCalculator label="Vida" icon={<Heart size={14} className="text-red-400" />}
+          value={c.hp} max={c.hpMax} barColor="bg-red-600" btnColor="bg-red-700 hover:bg-red-600"
+          onChange={n => set('hp', n)} />
+        <ResourceCalculator label="Sanidade" icon={<Brain size={14} className="text-blue-400" />}
+          value={c.san} max={c.sanMax} barColor="bg-blue-500" btnColor="bg-blue-700 hover:bg-blue-600"
+          onChange={n => set('san', n)} />
+      </Card>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         {Object.entries(c.stats).map(([k, v]) => <StatusCard key={k} name={k} value={v} />)}
       </div>
