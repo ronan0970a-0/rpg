@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useCharacter } from '../context/CharacterContext'
-import { Magic, MAGIC_TYPES, META } from '../types/magic'
+import { Magic, MAGIC_TYPES } from '../types/magic'
 import { Field, inputCls, Modal, Txt } from './ui'
 
 // Modal de criar/editar magia. `initial` é a magia (nova em branco ou existente)
 export default function MagicModal({ initial, onClose }: { initial: Magic; onClose: () => void }) {
-  const { save } = useCharacter()
+  const { state, save } = useCharacter()
   const [f, setF] = useState(initial)                       // cópia local do formulário
   const set = (k: keyof Magic, v: string) => setF({ ...f, [k]: v })
   const txt = (k: keyof Magic, label: string, area = false) => <Txt label={label} value={f[k]} onChange={v => set(k, v)} area={area} />
@@ -19,7 +19,7 @@ export default function MagicModal({ initial, onClose }: { initial: Magic; onClo
       </Field>
       <Field label="Elemento">
         <select className={inputCls} value={f.element} onChange={e => set('element', e.target.value)}>
-          {Object.keys(META).map(e => <option key={e} value={e}>{META[e].icon} {e}</option>)}
+          {state.elementDefs.map(d => <option key={d.name} value={d.name}>{d.icon} {d.name}</option>)}
         </select>
       </Field>
       {txt('description', 'Descrição', true)}

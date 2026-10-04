@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useCharacter } from '../context/CharacterContext'
-import { Magic, META, newMagic } from '../types/magic'
+import { Magic, newMagic } from '../types/magic'
 import MagicCard from '../components/MagicCard'
 import MagicModal from '../components/MagicModal'
 import { btnCls, inputCls } from '../components/ui'
@@ -27,7 +27,7 @@ export default function Magias() {
         <input className={inputCls} placeholder="Pesquisar magia" value={q} onChange={e => setQ(e.target.value)} />
         <select className={inputCls} value={el} onChange={e => setEl(e.target.value)}>
           <option value="">Todos os elementos</option>
-          {Object.keys(META).map(e => <option key={e}>{e}</option>)}
+          {state.elementDefs.map(d => <option key={d.name}>{d.name}</option>)}
         </select>
         <select className={inputCls} value={tp} onChange={e => setTp(e.target.value)}>
           <option value="">Todos os tipos</option>

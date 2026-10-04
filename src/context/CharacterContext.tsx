@@ -1,11 +1,15 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { Character } from '../types/character'
+import { DEFAULT_ELEMENTS, ElementDef } from '../types/elements'
 import { Magic } from '../types/magic'
 import { Passive } from '../types/passive'
 import { Accessory } from '../types/accessory'
 
-export interface AppState { dark: boolean; character: Character; magics: Magic[]; passives: Passive[]; accessories: Accessory[] }
+export interface AppState {
+  dark: boolean; character: Character; magics: Magic[]; passives: Passive[]; accessories: Accessory[]
+  elementDefs: ElementDef[] // paleta de elementos (nome, ícone, cor) — editável pelo usuário
+}
 export type ListKey = 'magics' | 'passives' | 'accessories'
 type Item = Magic | Passive | Accessory
 
@@ -20,7 +24,7 @@ export const INITIAL: AppState = {
     stats: { Força: 339, Velocidade: 363, Defesa: 402, Inteligência: 202, Sabedoria: 156, Carisma: 104 },
     resources: { 'Pontos de Ação': 0, Mana: 0, Energia: 0 },
   },
-  magics: [], passives: [], accessories: [],
+  magics: [], passives: [], accessories: [], elementDefs: DEFAULT_ELEMENTS,
 }
 
 // Remove colunas do banco que o app não usa e troca null por ''
@@ -54,6 +58,7 @@ async function fetchAll(): Promise<{ cid: string; state: AppState }> {
       magics: (mg.data ?? []).map(clean) as unknown as Magic[],
       passives: (ps.data ?? []).map(clean) as unknown as Passive[],
       accessories: (ac.data ?? []).map((r: any) => ({ ...clean(r), image: txt(r.image_url) })) as unknown as Accessory[],
+      elementDefs: Array.isArray(row.elements_meta) && row.elements_meta.length ? row.elements_meta : DEFAULT_ELEMENTS,
     },
   }
 }
@@ -67,6 +72,7 @@ async function push(cid: string, s: AppState) {
     name: c.name, player: c.player, race: c.race, klass: c.klass, level: c.level, age: c.age,
     height: Number(c.height) || null, weight: Number(c.weight) || null, elements: c.elements,
     hp: c.hp, hp_max: c.hpMax, san: c.san, san_max: c.sanMax, image_url: c.image || null,
+    elements_meta: s.elementDefs,
   }).eq('id', cid))
 
   // Status: apaga e regrava (a coluna "sort" guarda a ordem)
@@ -98,6 +104,8 @@ interface Ctx {
   setResource: (name: string, v: number) => void
   save: (key: ListKey, item: Item) => void
   remove: (key: ListKey, id: string) => void
+  addElementDef: (def: ElementDef) => void      // cria um elemento novo na paleta
+  removeElementDef: (name: string) => void      // remove da paleta e desmarca do personagem
   setDark: (d: boolean) => void
   replaceAll: (s: AppState) => void
   reset: () => void
@@ -144,6 +152,12 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
       return { ...s, [key]: next } as AppState
     }),
     remove: (key, id) => set(s => ({ ...s, [key]: (s[key] as Item[]).filter(i => i.id !== id) }) as AppState),
+    addElementDef: def => set(s => s.elementDefs.some(d => d.name === def.name) ? s : { ...s, elementDefs: [...s.elementDefs, def] }),
+    removeElementDef: name => set(s => ({
+      ...s,
+      elementDefs: s.elementDefs.filter(d => d.name !== name),
+      character: { ...s.character, elements: s.character.elements.filter(e => e !== name) }, // desmarca do personagem
+    })),
     setDark: dark => { localStorage.setItem('dark', dark ? '1' : '0'); setState(s => (s ? { ...s, dark } : s)) },
     replaceAll: s => set(() => ({ ...INITIAL, ...s })),
     reset: () => set(() => INITIAL),

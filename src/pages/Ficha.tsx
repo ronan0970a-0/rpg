@@ -1,8 +1,8 @@
 import { Brain, Heart } from 'lucide-react'
 import { useCharacter } from '../context/CharacterContext'
 import { Character } from '../types/character'
-import { ELEMENTS, META } from '../types/magic'
 import CharacterCard from '../components/CharacterCard'
+import ElementManager from '../components/ElementManager'
 import ResourceCalculator from '../components/ResourceCalculator'
 import StatusCard from '../components/StatusCard'
 import { Card, Field, Num, Txt, uploadImage } from '../components/ui'
@@ -34,20 +34,7 @@ export default function Ficha() {
           {num('Nível', 'level')}{num('Idade', 'age')}{txt('Altura (m)', 'height')}{txt('Peso (kg)', 'weight')}
           {num('HP Atual', 'hp')}{num('HP Máximo', 'hpMax')}{num('Sanidade Atual', 'san')}{num('Sanidade Máxima', 'sanMax')}
         </div>
-        <div>
-          <p className="mb-1 text-sm text-zinc-400">Elementos</p>
-          <div className="flex flex-wrap gap-2">
-            {ELEMENTS.map(e => {
-              const on = c.elements.includes(e)
-              return (
-                <button key={e} onClick={() => set('elements', on ? c.elements.filter(x => x !== e) : [...c.elements, e])}
-                  className={`rounded-full border px-3 py-1 text-sm transition ${on ? META[e].cls : 'border-zinc-700 text-zinc-500'}`}>
-                  {META[e].icon} {e}
-                </button>
-              )
-            })}
-          </div>
-        </div>
+        <ElementManager />
         <Field label="Imagem do personagem">
           <input type="file" accept="image/*" onChange={e => uploadImage(e.target.files?.[0], s => set('image', s))} />
         </Field>

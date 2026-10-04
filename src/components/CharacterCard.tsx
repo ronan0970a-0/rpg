@@ -1,11 +1,12 @@
 import { User } from 'lucide-react'
 import { useCharacter } from '../context/CharacterContext'
-import { META } from '../types/magic'
 import { Bar, Card } from './ui'
 
 // Cabeçalho da ficha: imagem, nome, nível/raça/classe, elementos e barras de HP e Sanidade
 export default function CharacterCard() {
-  const c = useCharacter().state.character
+  const { state } = useCharacter()
+  const c = state.character
+  const meta = (name: string) => state.elementDefs.find(d => d.name === name)
   return (
     <Card className="flex flex-col items-center gap-4 sm:flex-row">
       {c.image
@@ -16,7 +17,7 @@ export default function CharacterCard() {
         <h1 className="text-4xl font-bold text-amber-400">{c.name}</h1>
         <p>Nível {c.level} • {c.race} • {c.klass}</p>
         <div className="flex flex-wrap gap-2">
-          {c.elements.map(e => <span key={e} className={`rounded-full border px-3 py-0.5 text-xs ${META[e]?.cls ?? ''}`}>{META[e]?.icon} {e}</span>)}
+          {c.elements.map(e => <span key={e} className={`rounded-full border px-3 py-0.5 text-xs ${meta(e)?.cls ?? ''}`}>{meta(e)?.icon} {e}</span>)}
         </div>
         <p className="text-sm">❤️ HP {c.hp} / {c.hpMax}</p>
         <Bar value={c.hp} max={c.hpMax} color="bg-red-600" />
