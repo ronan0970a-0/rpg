@@ -13,10 +13,10 @@ export default function Magias() {
   const [tp, setTp] = useState('')                     // filtro de tipo
   const [editing, setEditing] = useState<Magic | null>(null) // magia aberta no modal (null = fechado)
   const types = [...new Set(state.magics.map(m => m.type).filter(Boolean))]
-  // Pesquisa + filtros + ordenação por nome
+  // Pesquisa + filtros + ordenação numérica pelo nome (1, 2… 10)
   const list = state.magics
     .filter(m => m.name.toLowerCase().includes(q.toLowerCase()) && (!el || m.element === el) && (!tp || m.type === tp))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt', { numeric: true }))
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">

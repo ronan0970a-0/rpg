@@ -10,9 +10,10 @@ export default function Passivas() {
   const { state } = useCharacter()
   const [q, setQ] = useState('')                               // texto da pesquisa
   const [editing, setEditing] = useState<Passive | null>(null)
-  // Pesquisa por nome ou categoria
-  const list = state.passives.filter(p =>
-    p.name.toLowerCase().includes(q.toLowerCase()) || p.category.toLowerCase().includes(q.toLowerCase()))
+  // Pesquisa por nome ou categoria + ordenação numérica pelo nome (01, 02… 10… L1, L2)
+  const list = state.passives
+    .filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.category.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt', { numeric: true }))
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
